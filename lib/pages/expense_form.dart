@@ -1,13 +1,14 @@
 import 'package:expense_tracker/components/my_button.dart';
-import 'package:expense_tracker/components/my_calendar.dart';
 import 'package:expense_tracker/db/database_helper.dart';
 import 'package:expense_tracker/models/expense_model.dart';
+import 'package:expense_tracker/utils/utils.dart';
 import 'package:flutter/material.dart';
 import '../components/my_dropdown.dart';
 import '../components/my_textfield.dart';
 
 class ExpenseForm extends StatefulWidget {
-  const ExpenseForm({super.key});
+  final Future<void> Function()? onLoad;
+  const ExpenseForm({super.key, required this.onLoad});
 
   @override
   State<ExpenseForm> createState() => _ExpenseViewState();
@@ -16,16 +17,10 @@ class ExpenseForm extends StatefulWidget {
 class _ExpenseViewState extends State<ExpenseForm> {
   TextEditingController nameController = TextEditingController();
   TextEditingController amountController = TextEditingController();
-  DateTime today = DateTime.now();
+  TextEditingController dateController = TextEditingController();
   String value = "None";
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
-
-  void onDaySelected(DateTime day, DateTime focus) {
-    setState(() {
-      today = day;
-    });
-  }
 
   void onChanged(newValue) {
     setState(() {
@@ -65,11 +60,12 @@ class _ExpenseViewState extends State<ExpenseForm> {
       Expense newExpense = Expense(
         note: nameController.text.trim(),
         amount: amount,
-        date: today,
+        date: convertStringToDate(dateController.text.trim()),
         categoryId: categoryId, // Utilise l'ID récupéré
       );
 
       await _databaseHelper.insertExpense(newExpense);
+      widget.onLoad;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -155,10 +151,19 @@ class _ExpenseViewState extends State<ExpenseForm> {
               valueChoose: value,
               onChanged: onChanged,
             ),
+            SizedBox(
+              height: screenHeight * 0.03,
+            ),
 
-            Calendar(
-              today: today,
-              onDaySelected: onDaySelected,
+            DateField(
+              controller: dateController,
+              onDateSelected: (selectedDate) {
+                print("Date sélectionnée: $selectedDate");
+                // Effectuez des actions avec la date sélectionnée
+              },
+            ),
+            SizedBox(
+              height: screenHeight * 0.03,
             ),
 
             // CONFIRM BUTTON

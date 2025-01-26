@@ -1,21 +1,19 @@
 import 'package:expense_tracker/components/expense_tile.dart';
-import 'package:expense_tracker/components/my_card.dart';
-import 'package:expense_tracker/pages/expense_form.dart';
+import 'package:expense_tracker/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import '../models/category_model.dart';
 import '../utils/utils.dart';
 import '../db/database_helper.dart';
 import '../models/expense_model.dart';
-import 'all_expenses.dart';
 
-class ExpensePage extends StatefulWidget {
-  const ExpensePage({super.key});
+class AllExpenses extends StatefulWidget {
+  const AllExpenses({super.key});
 
   @override
-  State<ExpensePage> createState() => _ExpenseViewState();
+  State<AllExpenses> createState() => _AllExpensesState();
 }
 
-class _ExpenseViewState extends State<ExpensePage> {
+class _AllExpensesState extends State<AllExpenses> {
   TextEditingController searchController = TextEditingController();
 
   final DatabaseHelper _databaseHelper = DatabaseHelper();
@@ -65,6 +63,19 @@ class _ExpenseViewState extends State<ExpensePage> {
     );
   }
 
+  void _filterExpenses(String query) async {
+    if (query.isEmpty) {
+      _loadItems(); //
+      return;
+    }
+
+    List<Expense> filteredExpenses = await _databaseHelper.searchExpense(query);
+
+    setState(() {
+      _expenses = filteredExpenses;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     //getting heigth and width
@@ -73,54 +84,35 @@ class _ExpenseViewState extends State<ExpensePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        foregroundColor: Theme.of(context).colorScheme.tertiary,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ExpenseForm(
-                      onLoad: _loadItems,
-                    ))),
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.add,
-          size: 32,
-        ),
-      ),
+      appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          title: Text(
+            "Historique",
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                fontSize: screenWidth * 0.05,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600),
+          ),
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded))),
       body: Column(
         children: [
-          MyCard(totalExpense: 250, totalIncome: 300),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenHeight * 0.02),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Transactions",
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AllExpenses())),
-                  child: Text(
-                    "Tout voir",
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.04,
-                      fontWeight: FontWeight.w900,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-                  ),
-                )
-              ],
-            ),
+          SizedBox(
+            height: screenHeight * 0.02,
+          ),
+
+          // CHAMP DE RECHERCHE
+          SearchField(
+              controller: searchController,
+              onChanged: (value) {
+                _filterExpenses(value);
+              }),
+
+          SizedBox(
+            height: screenHeight * 0.007,
           ),
 
           // SEE MY EXPENSE
@@ -149,7 +141,7 @@ class _ExpenseViewState extends State<ExpensePage> {
                 final expenses = snapshot.data!;
 
                 return ListView.separated(
-                  itemCount: expenses.length >= 7 ? 7 : expenses.length,
+                  itemCount: expenses.length,
                   itemBuilder: (context, index) {
                     final expense = expenses[index];
                     return ExpenseTile(
@@ -161,7 +153,7 @@ class _ExpenseViewState extends State<ExpensePage> {
                       onDelPressed: (p0) => openDeleteBox(expense),
                     );
                   },
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  separatorBuilder: (context, index) => SizedBox(height: screenHeight * 0.007),
                 );
               },
             ),
@@ -180,6 +172,7 @@ class _ExpenseViewState extends State<ExpensePage> {
           _loadItems();
         } catch (error) {
           print(error);
+          // Handle the error appropriately (e.g., show a snackbar)
         }
       },
       child: const Text("Supprimer"),
