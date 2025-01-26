@@ -1,16 +1,64 @@
-# expense_tracker
+Expense Tracker App
 
-A new Flutter project.
+📌 Introduction
 
-## Getting Started
+Expense Tracker App is a mobile application built with Flutter and SQLite that allows users to track their expenses by categories. It provides an intuitive UI, categorized expense tracking, and monthly filtering.
 
-This project is a starting point for a Flutter application.
+🚀 Features
 
-A few resources to get you started if this is your first Flutter project:
+📅 Add Expenses: Users can add expenses with a category, amount, and note.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+🔍 Search Expenses: Search for expenses by name.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+🗂️ Category Management: Users can create and delete categories.
+
+📊 Monthly Expense View: View expenses categorized by month.
+
+📜 Data Persistence: Uses SQLite for local storage.
+
+🏗️ Technologies Used
+
+Flutter (Dart)
+
+SQLite (sqflite package)
+
+Provider (State Management)
+
+Intl (Date Formatting)
+
+🛠️ Installation Guide
+
+Clone the Repository:
+
+git clone [https://github.com/your-repo/expense-tracker.git](https://github.com/Z-Isaac08/X_Pense_Mobile.git)
+cd expense-tracker
+
+Install Dependencies:
+
+flutter pub get
+
+Run the App:
+
+flutter run
+
+📌 Usage
+
+Open the app and create expense categories.
+
+Add new expenses with a category and amount.
+
+Navigate to the Monthly Expense Page to view expenses by month.
+
+Search for specific expenses using the search bar.
+
+📅 Future Improvements
+
+📈 Add Charts for Expense Analytics
+
+☁️ Sync with Cloud Storage
+
+📲 Export Data as CSV or PDF
+
+📩 Contact
+
+For any issues or feature requests, feel free to open an issue or reach out via email.
