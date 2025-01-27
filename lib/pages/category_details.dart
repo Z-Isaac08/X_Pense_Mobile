@@ -117,6 +117,7 @@ class _CategoryDetailsState extends State<CategoryDetails> {
                   itemBuilder: (context, index) {
                     final expense = expenses[index];
                     return ExpenseTile(
+                      isIncome: false,
                       title: expense.note,
                       subtitle:
                           "${formatDate(expense.date)} · ${getCategoryName(expense.categoryId)}",

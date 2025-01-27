@@ -35,6 +35,25 @@ class _CategoryPageState extends State<CategoryPage> {
     return _categories.map((a) => a.name).toList();
   }
 
+  void openDeleteBox(Category category) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Voulez-vous supprimez cette catégorie ?",
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+              fontFamily: "Poppins",
+              fontSize: 15),
+        ),
+        actions: [
+          _cancelButton(),
+          _deleteButton(category.id!),
+        ],
+      ),
+    );
+  }
+
   //save_category method
   void saveCategory() async {
     if (nameCategory.text.isNotEmpty) {
@@ -42,7 +61,7 @@ class _CategoryPageState extends State<CategoryPage> {
         try {
           Category newCategory = Category(name: nameCategory.text);
 
-          await _databaseHelper.insertCategories(newCategory);
+          await _databaseHelper.insertCategory(newCategory);
 
           _loadCategories();
 
@@ -164,7 +183,11 @@ class _CategoryPageState extends State<CategoryPage> {
             itemCount: _categories.length,
             itemBuilder: (context, index) {
               final category = _categories[index];
-              return CategoryTile(category: category);
+              return CategoryTile(
+                category: category,
+                onEditPressed: (context) {},
+                onDelPressed: (p0) => openDeleteBox(category),
+              );
             },
             separatorBuilder: (context, index) {
               return SizedBox(
@@ -173,6 +196,21 @@ class _CategoryPageState extends State<CategoryPage> {
           )),
         ],
       ),
+    );
+  }
+
+  Widget _deleteButton(int id) {
+    return MaterialButton(
+      onPressed: () async {
+        Navigator.pop(context);
+        try {
+          await _databaseHelper.deleteCategory(id);
+          _loadCategories();
+        } catch (error) {
+          print(error);
+        }
+      },
+      child: const Text("Supprimer"),
     );
   }
 

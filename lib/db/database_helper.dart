@@ -75,14 +75,14 @@ class DatabaseHelper {
     return await db.insert('expenses', expense.toMap());
   }
 
-  Future<int> insertCategories(Category category) async {
+  Future<int> insertCategory(Category category) async {
     final db = await database;
     return await db.insert('categories', category.toMap());
   }
 
-  Future<int> insertIncomes(Income income) async {
+  Future<int> insertIncome(Income income) async {
     final db = await database;
-    return await db.insert('categories', income.toMap());
+    return await db.insert('incomes', income.toMap());
   }
 
   /* GET METHODS */
@@ -98,6 +98,12 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) => Category.fromMap(maps[i]));
   }
 
+  Future<List<Income>> getIncomes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('incomes');
+    return List.generate(maps.length, (i) => Income.fromMap(maps[i]));
+  }
+
   /* DELETE METHODS */
   Future<int> deleteExpense(int id) async {
     final db = await database;
@@ -106,7 +112,16 @@ class DatabaseHelper {
 
   Future<int> deleteCategory(int id) async {
     final db = await database;
+    final expenses = await getExpensesByCategory(id);
+    for(var expense in expenses) {
+      await deleteExpense(expense.id!);
+    }
     return await db.delete('categories', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteIncome(int id) async {
+    final db = await database;
+    return await db.delete('incomes', where: 'id = ?', whereArgs: [id]);
   }
 
   /* SEARCH METHODS */
@@ -118,6 +133,16 @@ class DatabaseHelper {
       whereArgs: ['%$searchTerm%'],
     );
     return List.generate(results.length, (i) => Expense.fromMap(results[i]));
+  }
+
+  Future<List<Income>> searchIncome(String searchTerm) async {
+    final db = await database;
+    final results = await db.query(
+      'incomes',
+      where: 'source LIKE ?',
+      whereArgs: ['%$searchTerm%'],
+    );
+    return List.generate(results.length, (i) => Income.fromMap(results[i]));
   }
 
   /* UTILS METHODS */
@@ -151,6 +176,20 @@ class DatabaseHelper {
     } else {
       return null;
     }
+  }
+
+  Future<double> getTotalExpenses() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT SUM(amount) as total FROM expenses');
+    double total = result.first['total'] as double? ?? 0.0;
+    return total;
+  }
+
+  Future<double> getTotalIncomes() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT SUM(amount) as total FROM incomes');
+    double total = result.first['total'] as double? ?? 0.0;
+    return total;
   }
 
   Future<List<Expense>> getExpensesByCategory(int categoryId) async {

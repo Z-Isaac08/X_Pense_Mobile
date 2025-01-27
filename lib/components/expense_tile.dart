@@ -5,6 +5,7 @@ class ExpenseTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final String amount;
+  final bool isIncome;
   final void Function(BuildContext)? onEditPressed;
   final void Function(BuildContext)? onDelPressed;
 
@@ -13,6 +14,7 @@ class ExpenseTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.amount,
+    required this.isIncome,
     required this.onEditPressed,
     required this.onDelPressed,
   });
@@ -55,7 +57,7 @@ class ExpenseTile extends StatelessWidget {
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.w600),
           ),
-          trailing: Text(amount,
+          trailing: Text(isIncome ? "+$amount" : "-$amount",
               style: TextStyle(
                   color: Theme.of(context).colorScheme.inversePrimary,
                   fontFamily: "Poppins",
