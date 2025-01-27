@@ -3,7 +3,6 @@ import 'package:expense_tracker/db/database_helper.dart';
 import 'package:expense_tracker/models/income_model.dart';
 import 'package:expense_tracker/utils/utils.dart';
 import 'package:flutter/material.dart';
-import '../components/my_dropdown.dart';
 import '../components/my_textfield.dart';
 
 class IncomeForm extends StatefulWidget {
@@ -83,7 +82,6 @@ class _IncomeFormState extends State<IncomeForm> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
