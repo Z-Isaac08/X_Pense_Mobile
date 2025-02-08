@@ -49,6 +49,8 @@ class _IncomeFormState extends State<IncomeForm> {
 
       await _databaseHelper.insertIncome(newIncome);
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -113,10 +115,6 @@ class _IncomeFormState extends State<IncomeForm> {
 
           DateField(
             controller: dateController,
-            onDateSelected: (selectedDate) {
-              print("Date sélectionnée: $selectedDate");
-              // Effectuez des actions avec la date sélectionnée
-            },
           ),
           SizedBox(
             height: screenHeight * 0.03,

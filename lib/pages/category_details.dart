@@ -64,7 +64,6 @@ class _CategoryDetailsState extends State<CategoryDetails> {
 
   @override
   Widget build(BuildContext context) {
-    ;
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -144,18 +143,39 @@ class _CategoryDetailsState extends State<CategoryDetails> {
           await _databaseHelper.deleteExpense(id);
           _loadItems();
         } catch (error) {
-          print(error);
-          // Handle the error appropriately (e.g., show a snackbar)
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "$error",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                ),
+              ),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
       },
-      child: const Text("Supprimer"),
+      child: const Text(
+        "Supprimer",
+        style: TextStyle(
+          fontFamily: "Poppins",
+        ),
+      ),
     );
   }
 
   Widget _cancelButton() {
     return MaterialButton(
       onPressed: () => Navigator.pop(context),
-      child: const Text("Retour"),
+      child: const Text(
+        "Retour",
+        style: TextStyle(
+          fontFamily: "Poppins",
+        ),
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:expense_tracker/components/expense_tile.dart';
 import 'package:expense_tracker/components/my_card.dart';
 import 'package:expense_tracker/pages/expense_income_toggle.dart';
+import 'package:expense_tracker/pages/update_expense.dart';
+import 'package:expense_tracker/pages/update_income.dart';
 import 'package:flutter/material.dart';
-import '../components/transaction_model.dart';
+import '../models/transaction_model.dart';
 import '../models/category_model.dart';
 import '../models/income_model.dart';
 import '../utils/utils.dart';
@@ -192,7 +194,14 @@ class _ExpenseViewState extends State<ExpensePage> {
                         subtitle:
                             "${formatDate(item.expense!.date)} · ${getCategoryName(item.expense!.categoryId)}",
                         amount: intToString(item.expense!.amount),
-                        onEditPressed: (context) {},
+                        onEditPressed: (p0) async {
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateExpenseForm(
+                                      expense: item.expense!)));
+                          _loadItems();
+                        },
                         onDelPressed: (p0) => openDeleteBox(item),
                       );
                     } else if (item.isIncome) {
@@ -201,7 +210,14 @@ class _ExpenseViewState extends State<ExpensePage> {
                         title: item.income!.source,
                         subtitle: formatDate(item.income!.date),
                         amount: intToString(item.income!.amount),
-                        onEditPressed: (context) {},
+                        onEditPressed: (p0) async {
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateIncomeForm(income: item.income!)));
+                          _loadItems();
+                        },
                         onDelPressed: (p0) => openDeleteBox(item),
                       );
                     }
@@ -220,20 +236,36 @@ class _ExpenseViewState extends State<ExpensePage> {
   Widget _deleteButton(FinancialItem item) {
     return TextButton(
       onPressed: () async {
-        if (item.isExpense) {
-          await _databaseHelper
-              .deleteExpense(item.expense!.id!); // Suppression de la dépense
-        } else if (item.isIncome) {
-          await _databaseHelper
-              .deleteIncome(item.income!.id!); // Suppression du revenu
+        try {
+          if (item.isExpense) {
+            await _databaseHelper
+                .deleteExpense(item.expense!.id!); // Suppression de la dépense
+          } else if (item.isIncome) {
+            await _databaseHelper
+                .deleteIncome(item.income!.id!); // Suppression du revenu
+          }
+          _loadItems();
+          if (!mounted) return ;
+          Navigator.pop(context); // Fermer la boîte de dialogue
+        } catch (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "$error",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                ),
+              ),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
         }
-        _loadItems();
-        Navigator.pop(context); // Fermer la boîte de dialogue
       },
       child: Text(
         "Supprimer",
         style: TextStyle(
-          color: Theme.of(context).colorScheme.inversePrimary,
+          fontFamily: "Poppins",
         ),
       ),
     );
@@ -242,7 +274,12 @@ class _ExpenseViewState extends State<ExpensePage> {
   Widget _cancelButton() {
     return MaterialButton(
       onPressed: () => Navigator.pop(context),
-      child: const Text("Retour"),
+        child: Text(
+          "Supprimer",
+          style: TextStyle(
+            fontFamily: "Poppins",
+          ),
+        ),
     );
   }
 }

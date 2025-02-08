@@ -65,6 +65,8 @@ class _ExpenseViewState extends State<ExpenseForm> {
 
       await _databaseHelper.insertExpense(newExpense);
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -137,10 +139,6 @@ class _ExpenseViewState extends State<ExpenseForm> {
 
           DateField(
             controller: dateController,
-            onDateSelected: (selectedDate) {
-              print("Date sélectionnée: $selectedDate");
-              // Effectuez des actions avec la date sélectionnée
-            },
           ),
           SizedBox(
             height: screenHeight * 0.03,

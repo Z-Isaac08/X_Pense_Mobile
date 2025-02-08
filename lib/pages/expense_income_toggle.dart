@@ -44,8 +44,7 @@ class _ExpenseIncomeToggleState extends State<ExpenseIncomeToggle> {
             isSelected: [isExpense, !isExpense],
             onPressed: (index) {
               setState(() {
-                isExpense = (index ==
-                    0); // bascule entre true (Expense) et false (Income)
+                isExpense = index == 0; // bascule entre true (Expense) et false (Income)
               });
             },
             children: [

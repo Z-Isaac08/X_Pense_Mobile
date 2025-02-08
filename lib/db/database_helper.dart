@@ -22,20 +22,8 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'expense.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 1,
       onCreate: _onCreate,
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await db.execute('''
-          CREATE TABLE incomes(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            source TEXT NOT NULL,
-            amount REAL NOT NULL,
-            date TEXT NOT NULL
-          )
-        ''');
-        }
-      },
     );
   }
 
@@ -104,6 +92,37 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) => Income.fromMap(maps[i]));
   }
 
+  /* UPDATE METHODS */
+  Future<int> updateCategory(Category category) async {
+    final db = await database;
+    return await db.update(
+      'categories',
+      category.toMap(),
+      where: 'id = ?',
+      whereArgs: [category.id],
+    );
+  }
+
+  Future<int> updateExpense(Expense expense) async {
+    final db = await database;
+    return await db.update(
+      'expenses',
+      expense.toMap(),
+      where: 'id = ?',
+      whereArgs: [expense.id],
+    );
+  }
+
+  Future<int> updateIncome(Income income) async {
+    final db = await database;
+    return await db.update(
+      'incomes',
+      income.toMap(),
+      where: 'id = ?',
+      whereArgs: [income.id],
+    );
+  }
+  
   /* DELETE METHODS */
   Future<int> deleteExpense(int id) async {
     final db = await database;

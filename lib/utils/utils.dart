@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 String formatDate(DateTime date) {
-  final formatter = DateFormat('dd/MM/yyyy'); // Format avec date et heure
+  final formatter = DateFormat('dd-MM-yyyy'); // Format avec date et heure
   return formatter.format(date);
 }
 
@@ -19,6 +19,6 @@ DateTime convertStringToDate(String dateString) {
     final DateFormat format = DateFormat('dd-MM-yyyy');
     return format.parse(dateString); // Retourne la date en format DateTime
   } catch (e) {
-    throw Exception("Format de date invalide");
+    throw Exception("Format de date invalide : $dateString");
   }
 }

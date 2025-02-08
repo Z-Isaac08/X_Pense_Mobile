@@ -1,7 +1,9 @@
 import 'package:expense_tracker/components/expense_tile.dart';
 import 'package:expense_tracker/components/my_textfield.dart';
+import 'package:expense_tracker/pages/update_expense.dart';
+import 'package:expense_tracker/pages/update_income.dart';
 import 'package:flutter/material.dart';
-import '../components/transaction_model.dart';
+import '../models/transaction_model.dart';
 import '../models/category_model.dart';
 import '../models/income_model.dart';
 import '../utils/utils.dart';
@@ -211,7 +213,14 @@ class _AllExpensesState extends State<AllExpenses> {
                         subtitle:
                             "${formatDate(item.expense!.date)} · ${getCategoryName(item.expense!.categoryId)}",
                         amount: intToString(item.expense!.amount),
-                        onEditPressed: (context) {},
+                        onEditPressed: (p0) async {
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateExpenseForm(
+                                      expense: item.expense!)));
+                          _loadItems();
+                        },
                         onDelPressed: (p0) => openDeleteBox(item),
                       );
                     } else if (item.isIncome) {
@@ -220,7 +229,14 @@ class _AllExpensesState extends State<AllExpenses> {
                         title: item.income!.source,
                         subtitle: formatDate(item.income!.date),
                         amount: intToString(item.income!.amount),
-                        onEditPressed: (context) {},
+                        onEditPressed: (p0) async {
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateIncomeForm(income: item.income!)));
+                          _loadItems();
+                        },
                         onDelPressed: (p0) => openDeleteBox(item),
                       );
                     }
@@ -247,12 +263,13 @@ class _AllExpensesState extends State<AllExpenses> {
               .deleteIncome(item.income!.id!); // Suppression du revenu
         }
         _loadItems();
+        if (!mounted) return;
         Navigator.pop(context); // Fermer la boîte de dialogue
       },
       child: Text(
         "Supprimer",
         style: TextStyle(
-          color: Theme.of(context).colorScheme.inversePrimary,
+          fontFamily: "Poppins",
         ),
       ),
     );
@@ -261,7 +278,12 @@ class _AllExpensesState extends State<AllExpenses> {
   Widget _cancelButton() {
     return MaterialButton(
       onPressed: () => Navigator.pop(context),
-      child: const Text("Retour"),
+      child: const Text(
+        "Retour",
+        style: TextStyle(
+          fontFamily: "Poppins",
+        ),
+      ),
     );
   }
 }
